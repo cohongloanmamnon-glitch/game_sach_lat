@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sách 3D Vui Nhộn - Bé Tập Phân Loại</title>
+    <style>
+        body {
+            background-color: #f0f8ff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, sans-serif;
+            perspective: 2000px;
+            overflow: hidden;
+        }
+
+        .book {
+            position: relative;
+            width: 450px;
+            height: 650px;
+            transform-style: preserve-3d;
+        }
+
+        .page {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            background-color: white;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            transform-origin: left;
+            transform-style: preserve-3d;
+            transition: transform 1.2s cubic-bezier(0.645, 0.045, 0.355, 1);
+            cursor: pointer;
+            border-radius: 5px 20px 20px 5px;
+        }
+
+        .front, .back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            padding: 25px;
+            box-sizing: border-box;
+            backface-visibility: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+            border: 1px solid #ddd;
+        }
+
+        .back { transform: rotateY(180deg); background-color: #f9f9f9; }
+        .page.flipped { transform: rotateY(-180deg); }
+
+        /* Thứ tự trang */
+        #p1 { z-index: 5; } #p2 { z-index: 4; } #p3 { z-index: 3; } #p4 { z-index: 2; } #p5 { z-index: 1; }
+
+        /* Hình nền bìa */
+        .cover-img {
+            background-image: url('NEN.png');
+            background-size: 100% 100%;
+            width: 100%;
+            height: 100%;
+            border-radius: 5px 20px 20px 5px;
+        }
+
+        /* Lưới hiển thị đồ vật */
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            width: 100%;
+            flex-grow: 1;
+            align-content: center;
+        }
+
+        .item-box { display: flex; flex-direction: column; align-items: center; }
+        .item-img {
+            width: 140px; 
+            height: 140px;
+            object-fit: contain;
+            filter: drop-shadow(2px 4px 6px rgba(0,0,0,0.1));
+        }
+
+        .question-box {
+            background: #fff9c4;
+            padding: 15px;
+            border-radius: 15px;
+            border: 2px dashed #fbc02d;
+            text-align: center;
+            font-weight: bold;
+            color: #d35400;
+            margin-bottom: 20px; /* Thêm khoảng cách để không đè lên tên tác giả */
+        }
+
+        .answer-text {
+            font-size: 2.2em;
+            font-weight: bold;
+            color: #2e7d32;
+            text-align: center;
+            line-height: 1.2;
+        }
+
+        .thanks-page {
+            background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
+            color: white;
+            justify-content: center;
+            text-align: center;
+        }
+
+        /* --- CSS MỚI CHO TÊN TÁC GIẢ --- */
+        .author-footer {
+            position: absolute;
+            bottom: 10px;
+            left: 0;
+            width: 100%;
+            text-align: center;
+            font-size: 13px;
+            font-style: italic;
+            color: #7f8c8d;
+            z-index: 10;
+            font-weight: 500;
+        }
+
+        /* Đổi màu chữ tác giả thành trắng ở trang cảm ơn để dễ đọc trên nền màu */
+        .thanks-page .author-footer {
+            color: rgba(255, 255, 255, 0.9);
+        }
+    </style>
+</head>
+<body>
+
+    <audio id="soundFlip" src="lat_sach.mp3"></audio>
+    <audio id="soundSuccess" src="dung.mp3"></audio>
+
+    <div class="book">
+        
+        <div class="page" id="p1" onclick="handleFlip(this)">
+            <div class="front">
+                <div class="cover-img"></div>
+                <div class="author-footer">Người thực hiện: Trần Hồng Loan</div>
+            </div>
+            <div class="back">
+                <h1 style="color: #c0392b;">CÁCH CHƠI</h1>
+                <p style="font-size: 1.3em; line-height: 1.6; text-align: center;">
+                    Bé hãy lật sách, gọi tên các đồ vật và tìm ra <b>tên gọi chung</b> của chúng nhé!
+                </p>
+                <div style="font-size: 80px;">🎯</div>
+                <div class="author-footer">Người thực hiện: Trần Hồng Loan</div>
+            </div>
+        </div>
+
+        <div class="page" id="p2" onclick="handleFlip(this, true)">
+            <div class="front">
+                <h2>Bé tìm tên gọi chung?</h2>
+                <div class="grid-container">
+                    <div class="item-box"><img src="dia.jpg" class="item-img"></div>
+                    <div class="item-box"><img src="chen.jpg" class="item-img"></div>
+                    <div class="item-box"><div style="font-size: 100px;">🥄</div></div>
+                    <div class="item-box"><div style="font-size: 100px;">🥛</div></div>
+                </div>
+                <div class="question-box">Đây là nhóm đồ dùng gì?</div>
+                <div class="author-footer">Người thực hiện: Trần Hồng Loan</div>
+            </div>
+            <div class="back">
+                <h2>CHÍNH XÁC!</h2>
+                <div class="answer-text">ĐỒ DÙNG<br>ĂN UỐNG</div>
+                <div style="font-size: 100px;">🌸</div>
+                <div class="author-footer">Người thực hiện: Trần Hồng Loan</div>
+            </div>
+        </div>
+
+        <div class="page" id="p3" onclick="handleFlip(this, true)">
+            <div class="front">
+                <h2>Bé tìm tên gọi chung?</h2>
+                <div class="grid-container">
+                    <div class="item-box"><img src="bepga.png" class="item-img"></div>
+                    <div class="item-box"><img src="chao.png" class="item-img"></div>
+                    <div class="item-box"><img src="lovisong.png" class="item-img"></div>
+                    <div class="item-box"><div style="font-size: 100px;">🍲</div></div>
+                </div>
+                <div class="question-box">Đây là nhóm đồ dùng gì?</div>
+                <div class="author-footer">Người thực hiện: Trần Hồng Loan</div>
+            </div>
+            <div class="back">
+                <h2>GIỎI QUÁ!</h2>
+                <div class="answer-text">ĐỒ DÙNG<br>NHÀ BẾP</div>
+                <div style="font-size: 100px;">🌻</div>
+                <div class="author-footer">Người thực hiện: Trần Hồng Loan</div>
+            </div>
+        </div>
+
+        <div class="page" id="p4" onclick="handleFlip(this, true)">
+            <div class="front">
+                <h2>Bé tìm tên gọi chung?</h2>
+                <div class="grid-container">
+                    <div class="item-box"><img src="but.jpg" class="item-img"></div>
+                    <div class="item-box"><img src="vo.jpg" class="item-img"></div>
+                    <div class="item-box"><img src="thuoc.jpg" class="item-img"></div>
+                    <div class="item-box"><img src="tẩy.jpg" class="item-img"></div>
+                </div>
+                <div class="question-box">Đây là nhóm đồ dùng gì?</div>
+                <div class="author-footer">Người thực hiện: Trần Hồng Loan</div>
+            </div>
+            <div class="back">
+                <h2>TUYỆT VỜI!</h2>
+                <div class="answer-text">ĐỒ DÙNG<br>HỌC TẬP</div>
+                <div style="font-size: 100px;">🌼</div>
+                <div class="author-footer">Người thực hiện: Trần Hồng Loan</div>
+            </div>
+        </div>
+
+        <div class="page" id="p5" onclick="handleFlip(this)">
+            <div class="front thanks-page">
+                <h1 style="font-size: 3em;">CẢM ƠN<br>CÁC BÉ!</h1>
+                <p style="font-size: 1.5em;">Bé đã hoàn thành rất tốt!</p>
+                <div style="font-size: 120px;">🎉</div>
+                <div class="author-footer">Người thực hiện: Trần Hồng Loan</div>
+            </div>
+            <div class="back thanks-page">
+                <h1>HẸN GẶP LẠI</h1>
+                <div style="font-size: 100px;">👋</div>
+                <div class="author-footer">Người thực hiện: Trần Hồng Loan</div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        function handleFlip(page, isAnswerPage = false) {
+            const flipSound = document.getElementById('soundFlip');
+            const successSound = document.getElementById('soundSuccess');
+
+            // Chơi tiếng lật sách
+            flipSound.currentTime = 0;
+            flipSound.play();
+
+            // Nếu lật sang mặt sau (đáp án) thì chơi tiếng vỗ tay
+            if (!page.classList.contains('flipped') && isAnswerPage) {
+                setTimeout(() => {
+                    successSound.currentTime = 0;
+                    successSound.play();
+                }, 600);
+            }
+
+            page.classList.toggle('flipped');
+            
+            // Xử lý z-index
+            if (page.classList.contains('flipped')) {
+                setTimeout(() => { page.style.zIndex = 1; }, 600);
+            } else {
+                const idMap = { 'p1': 5, 'p2': 4, 'p3': 3, 'p4': 2, 'p5': 1 };
+                page.style.zIndex = idMap[page.id];
+            }
+        }
+    </script>
+</body>
+</html>
